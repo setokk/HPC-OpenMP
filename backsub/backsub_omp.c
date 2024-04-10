@@ -96,7 +96,7 @@ void main (int argc, char *argv[]) {
                 success = 0;
             }
         }
-        if (success)
+        if (!success)
             printf(ANSI_COLOR_RED "Validation Failed...\n" ANSI_COLOR_RESET);
         else
             printf(ANSI_COLOR_GREEN "Validation Succeeded...\n" ANSI_COLOR_RESET);
