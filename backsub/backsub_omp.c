@@ -68,6 +68,7 @@ void main (int argc, char *argv[]) {
                 sum += (x[j] * a[i][j]);
                 //printf ("%d %d %f %f %f \t \n", i, j, x[j], a[i][j], sum);
             }
+
             x[i] = (b[i] - sum) / a[i][i];
             //printf ("%d %f %f %f %f \n", i, b[i], sum, a[i][i], x[i]);
         }
