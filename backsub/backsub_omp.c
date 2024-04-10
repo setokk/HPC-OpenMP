@@ -78,7 +78,7 @@ void main (int argc, char *argv[]) {
         /* Print result */
         #ifdef DEBUG
         for (int i = 0; i < N; i++) {
-            for (int j = 0; j < i; j++)
+            for (int j = 0; j <= i; j++)
                 printf ("%f \t", a[i][j]);
             printf ("%f \t%f\n", x[i], b[i]);
         }
@@ -89,7 +89,7 @@ void main (int argc, char *argv[]) {
         int success = 1;
         for (int i = 0; i < N; i++) {
             double sum = 0.0;
-            for (int j = 0; j < i; j++)
+            for (int j = 0; j <= i; j++)
                 sum += (x[j]*a[i][j]);
             if (fabsf(sum - b[i]) > 0.00001) {
                 //printf("%f != %f\n", sum, b[i]);
