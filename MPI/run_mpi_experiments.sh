@@ -18,11 +18,13 @@ declare -a n_procs
 
 algorithm_args_map["char_freq"]="file.txt"
 algorithm_args_map["string_match"]="file.txt ok"
+algorithm_args_map["jacobi_heat"]=""
 
 # For file based algorithms
-echo -e "[${YELLOW}GENERATE${NC}]: Generating big file file.txt, size = 1000000000. Please wait..."
+echo -e "[${YELLOW}SETUP${NC}]: Generating file.txt, size = 1000000000. Please wait..."
 base64 /dev/urandom | head -c 1000000000 > file.txt
-echo -e "[${GREEN}SUCCESS${NC}]: Successfully generated file.txt. Proceeding with experiments..."
+echo -e "[${GREEN}SETUP${NC}]: Successfully generated file.txt. Proceeding with MPI experiments."
+print_newlines 2
 
 # Main loop to run experiments
 root_path=$(pwd)
@@ -57,4 +59,5 @@ done
 
 # Cleanup
 rm -rf "${root_path}/file.txt"
+echo -e "[${GREEN}CLEANUP${NC}]: Cleanup was successful. Exiting experiment script..."
 

@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
     fseek(pFile, 0, SEEK_END);
     long file_size = ftell(pFile);
     rewind(pFile);
-    printf("file size is %ld\n", file_size);
+    if (rank == 0)
+        printf("file size is %ld\n", file_size);
 
     long local_file_size = file_size / size;
     char *local_buffer = (char *)malloc(sizeof(char) * local_file_size);
