@@ -17,8 +17,14 @@ declare -A algorithm_args_map # used to hold the algorithms names (dir names) an
 declare -a n_procs
 
 algorithm_args_map["char_freq"]="file.txt"
+algorithm_args_map["string_match"]="file.txt ok"
 
+# For file based algorithms
+echo -e "[${YELLOW}GENERATE${NC}]: Generating big file file.txt, size = 1000000000. Please wait..."
+base64 /dev/urandom | head -c 1000000000 > file.txt
+echo -e "[${GREEN}SUCCESS${NC}]: Successfully generated file.txt. Proceeding with experiments..."
 
+# Main loop to run experiments
 root_path=$(pwd)
 for algorithm in "${!algorithm_args_map[@]}"; do
     echo "--------------------------------"
@@ -27,7 +33,10 @@ for algorithm in "${!algorithm_args_map[@]}"; do
     executable="${algorithm}_mpi"
     c_file="${executable}.c"
 
-    # compile mpi program
+    # Move file inside algorithm directory (in case of file based algorithm)
+    mv "${root_path}/file.txt" .
+
+    # Compile mpi program
     mpicc -o "${executable}" "${c_file}"
 
     # read program arguments (separated by spaces)
@@ -40,5 +49,12 @@ for algorithm in "${!algorithm_args_map[@]}"; do
         print_newlines 2
     done
 
+    # Move file back to root path
+    mv file.txt "${root_path}"
+
     echo "--------------------------------"
 done
+
+# Cleanup
+rm -rf "${root_path}/file.txt"
+
