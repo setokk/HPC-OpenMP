@@ -15,10 +15,12 @@ print_newlines() {
 
 declare -A algorithm_args_map # used to hold the algorithms names (dir names) and their program arguments
 declare -a n_procs
+n_procs=(1 2 4 6 8 10)
 
 algorithm_args_map["char_freq"]="file.txt"
 algorithm_args_map["string_match"]="file.txt ok"
 algorithm_args_map["jacobi_heat"]=""
+algorithm_args_map["count_sort"]="120"
 
 # For file based algorithms
 echo -e "[${YELLOW}SETUP${NC}]: Generating file.txt, size = 1000000000. Please wait..."
@@ -44,7 +46,6 @@ for algorithm in "${!algorithm_args_map[@]}"; do
     # read program arguments (separated by spaces)
     read -r -a arg_array <<< "${algorithm_args_map[${algorithm}]}"
 
-    n_procs=(1 2 4 6 8 10)
     for n_proc in "${n_procs[@]}"; do
         echo -e "[${BLUE}INFO${NC}]: Running ${c_file} with ${n_proc} processes."
         time mpiexec --oversubscribe -n "${n_proc}" "${executable}" "${arg_array[@]}"
