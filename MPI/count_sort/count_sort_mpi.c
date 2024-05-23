@@ -25,14 +25,20 @@ int main(int argc, char *argv[])
    }
 
    int n = strtol(argv[1], NULL, 10);
-   y = ( int * ) malloc ( n * sizeof ( int ) );
 
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
    x = ( int * ) malloc ( n * sizeof ( int ) );
-   for (i=0; i<n; i++)
-		x[i] = n - i;
+   if (world_rank == 0) {
+       y = ( int * ) malloc ( n * sizeof ( int ) );
+       for (i=0; i<n; i++)
+           x[i] = n - i;
+   }
+
+   // Make a copy of x in all processes
+   MPI_Bcast(x, n, MPI_INT, 0, MPI_COMM_WORLD);
 
    // Define struct in MPI
    int local_n = n / world_size;
@@ -55,25 +61,32 @@ int main(int argc, char *argv[])
         MPI_Send(sortedIndices, 1, mpi_sorted_indices, 0, 0, MPI_COMM_WORLD);
 
    if (world_rank == 0) {
-        for (int l=0; l<local_n; l++) {
+        for (int l=0; l<sortedIndices->currIndex; l++) {
             y[sortedIndices->indices[l]] = x[sortedIndices->xIndices[l]];
         }
 
-        SortedIndices* result;
         for (int k=1; k<world_size; k++) {
+            SortedIndices* result = new_SortedIndices(local_n);
             MPI_Recv(result, 1, mpi_sorted_indices, k, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            for (int l=0; l<local_n; l++) {
+            for (int l=0; l<result->currIndex; l++) {
                 y[result->indices[l]] = x[result->xIndices[l]];
             }
-
             free(result);
+            free(result->indices);
+            free(result->xIndices);
         }
 
     for (i=0; i<n; i++)
 		printf("%d\n", y[i]);
+
+    free(y);
    }
 
     MPI_Type_free(&mpi_sorted_indices);
+    free(sortedIndices->indices);
+    free(sortedIndices->xIndices);
+    free(sortedIndices);
+    free(x);
     MPI_Finalize();
 
    return 0;
